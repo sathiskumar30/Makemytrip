@@ -43,6 +43,21 @@ class Basepage:
         else:
             raise ValueError(f"Unsupported locator_name: {locator_name}")
 
+    def scroll_into_view(self,locator_name,locator_value,timeout):
+        by_strategy = self.get_by_strategy(locator_name)
+        element = WebDriverWait(self.driver, timeout).until(
+            EC.presence_of_element_located((by_strategy, locator_value))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+
+    def scroll_into_view_click(self,locator_name,locator_value,timeout):
+        by_strategy = self.get_by_strategy(locator_name)
+        element = WebDriverWait(self.driver, timeout).until(
+            EC.presence_of_element_located((by_strategy, locator_value))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+        self.driver.execute_script("arguments[0].click();", element)
+
     def wait_for_element(self, by_strategy, locator_value, timeout):
         try:
             element = WebDriverWait(self.driver, timeout).until(
@@ -53,6 +68,21 @@ class Basepage:
 
         except Exception as e:
             print(f"Error: {e}")
+
+    def javascript_click(self,locator_name,locator_value,timeout):
+        by_strategy = self.get_by_strategy(locator_name)
+        element = WebDriverWait(self.driver, timeout).until(
+            EC.presence_of_element_located((by_strategy, locator_value))
+        )
+        self.driver.execute_script("arguments[0].click();", element)
+
+    def javascript_click_send_keys(self,locator_name,locator_value,value,timeout):
+        by_strategy = self.get_by_strategy(locator_name)
+        element = WebDriverWait(self.driver, timeout).until(
+            EC.presence_of_element_located((by_strategy, locator_value))
+        )
+        self.driver.execute_script("arguments[0].click();", element)
+        element.send_keys(value)
 
     def wait_click_a_element(self, locator_name, locator_value ,value):
         by_strategy = self.get_by_strategy(locator_name)
@@ -80,7 +110,7 @@ class Basepage:
     def drop_down(self, locator_name, locator_value, value,drop_value):
         element = self.get_element(locator_name, locator_value)
         element.click()
-        element.clear()
+        # element.clear()
 
         try:
             WebDriverWait(self.driver, 10).until(
@@ -93,6 +123,11 @@ class Basepage:
 
         except Exception as e:
             print(f"Error: {e}")
+
+    def action_chains_click(self,locator_name, locator_value):
+        element = self.get_element(locator_name, locator_value)
+        actions = ActionChains(self.driver)
+        actions.move_to_element(element).click().perform()
 
     def date(self,locator_name, locator_value ,date):
         element = self.get_element(locator_name, locator_value)
